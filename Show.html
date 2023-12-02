@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body class="container mt-5"> 
+  <h1 class="mb-4">Hackathon current ranking</h1>
+  <ul id="valueList" class="list-group mb-4"></ul>
+
+  <script>
+    function updateList(values) {
+            var listElement = document.getElementById('valueList');
+            console.log(values);
+            listElement.innerHTML = ''; // Clear the list
+
+            for (const [key, value] of Object.entries(values)) {
+              console.log(key, value);
+              var listItem = document.createElement('li');
+              //var s = `hello ${my_name}, how are you doing`;
+
+              listItem.innerHTML = `<strong> ${key} </strong>: ${value}`;
+              listItem.className = 'list-group-item';
+              listElement.appendChild(listItem);  
+            }
+
+            /*values.forEach(function(value) {
+              var listItem = document.createElement('li');
+              listItem.textContent = value;
+              listElement.appendChild(listItem);
+            });*/
+
+          }
+
+    function update(){
+        // Fetch list values from Google Apps Script and display them
+      google.script.run.withSuccessHandler(updateList).iterateList();
+    }
+    
+    update();
+    setInterval(update, 3000);
+
+
+
+  </script>
+</body>
+</html>
