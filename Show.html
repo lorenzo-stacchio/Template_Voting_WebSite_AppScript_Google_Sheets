@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <base target="_top">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
-<body class="container mt-5"> 
-  <h1 class="mb-4">Hackathon current ranking</h1>
-  <ul id="valueList" class="list-group mb-4"></ul>
 
-  <script>
-    function updateList(values) {
+<body class="container mt-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col">
+        <h1 class="mb-4">Hackathon current ranking</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <table class="table table-bordered table-striped">
+          <thead class="thead-dark">
+          <tr>
+            <td class="td">Team Name </td>
+            <td class="td">Actual Score </td>
+          </tr>
+          </thead>
+          <tbody id="valueList">
+          </tbody>
+        </table>
+      
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-right">
+      <h5 class="mb-5" id="updated">Update at </h5>
+      </div>
+    </div>
+    </div>
+
+    <script>
+      function updateList(values) {
             var listElement = document.getElementById('valueList');
             console.log(values);
             listElement.innerHTML = ''; // Clear the list
 
-            for (const [key, value] of Object.entries(values)) {
-              console.log(key, value);
-              var listItem = document.createElement('li');
-              //var s = `hello ${my_name}, how are you doing`;
+            var dictEl = Object.entries(values);
 
-              listItem.innerHTML = `<strong> ${key} </strong>: ${value}`;
-              listItem.className = 'list-group-item';
-              listElement.appendChild(listItem);  
+            //sorted by vote
+            for (const [key, value] of dictEl.sort((a, b) => b[1] - a[1])) {
+              console.log(key, value);
+              var rowTable = document.createElement('tr');
+              var array1 = [key,value];
+
+              array1.forEach((element) =>{
+                    console.log(element);
+                    var td1 = document.createElement('td');
+                    td1.innerText = element;
+                    rowTable.appendChild(td1)
+              });
+              console.log(rowTable);
+
+              rowTable.className = 'tr';
+              listElement.appendChild(rowTable);  
             }
 
-            /*values.forEach(function(value) {
-              var listItem = document.createElement('li');
-              listItem.textContent = value;
-              listElement.appendChild(listItem);
-            });*/
-
+            var date = new Date().toLocaleString();
+            document.getElementById('updated').textContent = `Update at ${date}`;
           }
 
     function update(){
@@ -43,10 +77,8 @@
     }
     
     update();
-    setInterval(update, 3000);
-
-
-
-  </script>
+    setInterval(update, 5000);
+    </script>
 </body>
+
 </html>
