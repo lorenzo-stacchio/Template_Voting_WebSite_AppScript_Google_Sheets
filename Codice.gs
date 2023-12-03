@@ -3,7 +3,7 @@ function countVotes() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Risposte del modulo 1');
   
   // Define the column containing the votes and the discriminating column
-  var votesColumn = [2,3]; // Assuming "Votes" is in the first column (A)
+  var votesColumn = [2,3,5,6,7,8,9,10]; // Assuming "Votes" is in the first column (A)
   var discriminatingColumn = 4; // Assuming "Candidate" is in the second column (B)
   
   // Get the data range
@@ -12,7 +12,15 @@ function countVotes() {
   
   // Create an object to store the counts
   var counts = {};
-  
+  var titleTotalScore = "Totale";
+  var teamName = "Nome Team";
+  //pre-fill order for presentation in html
+  var orderList = [teamName];
+  for (var j = 0; j < votesColumn.length; j++) {
+      orderList.push(values[0][votesColumn[j]])
+  }
+  orderList.push(titleTotalScore);
+
   // Loop through the rows and count the votes
   for (var i = 1; i < values.length; i++) {
     for (var j = 0; j < votesColumn.length; j++) {
@@ -22,36 +30,32 @@ function countVotes() {
           if (discriminatingValue !== "") {
             // If the discriminating value is not in the counts object, initialize it
             if (!counts[discriminatingValue]) {
-              counts[discriminatingValue] = 0;
+              counts[discriminatingValue] = {};
+              counts[discriminatingValue][teamName] = discriminatingValue;
             }
-                        
+
+            // If the total value is not in the counts object, initialize it
+            if (!counts[discriminatingValue][titleTotalScore]){
+              counts[discriminatingValue][titleTotalScore] = vote;
+            } else{
+              counts[discriminatingValue][titleTotalScore] += vote;
+            } 
+                 
             // Increment the count for the vote and discriminating value
-            counts[discriminatingValue] += vote;
+            var colName = values[0][votesColumn[j]]
+            if (!counts[discriminatingValue][colName]){
+              counts[discriminatingValue][colName] = vote;
+            } 
+            else{
+                counts[discriminatingValue][colName] += vote;
+            }
+            
           }
     }
    
   }
-  
-  // Output the counts to a new sheet
-
-  var outputSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Vote Counts');
-  //var outputSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Vote Counts');
-  var outputRange = outputSheet.getRange(1, 1);
-  
-  console.log(counts);
-
-  // Loop through the counts object and output the results
-  for (var discriminatingValue in counts) {
-    var row = [discriminatingValue];
-    
-    console.log("In log " + discriminatingValue);
-
-    row.push(counts[discriminatingValue]);
-    
-    outputRange.offset(0, 0, 1, row.length).setValues([row]);
-    outputRange = outputRange.offset(1, 0);
-  }
-  return counts;
+  console.log([counts, orderList]);
+  return [counts, orderList];
 }
 
 function onEditTrigger(e) {
@@ -67,5 +71,5 @@ function iterateList() {
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Show')
-      .setTitle('List Values Page');
+      .setTitle('Hackathon Current Ranking');
 }
