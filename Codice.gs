@@ -3,7 +3,11 @@ function countVotes() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Risposte del modulo 1');
 
   // Define the column containing the votes and the discriminating column
-  var votesColumn = [2, 3, 5, 6, 7, 8, 9, 10]; // Assuming "Votes" is in the first column (A)
+  var votesColumnStandard = [2, 3, 5, 6, 7, 8]; // Assuming "Votes" is in the first column (A)
+  var votesColumnStartup = [9, 10]; // Assuming "Votes" is in the first column (A)
+
+  var allCriteria = votesColumnStandard.concat(votesColumnStartup);
+
   var discriminatingColumn = 4; // Assuming "Candidate" is in the second column (B)
 
   // Get the data range
@@ -13,14 +17,25 @@ function countVotes() {
   // Create an object to store the counts
   var counts = {};
   var titleTotalScore = "Totale";
+  var titleTotalScoreStartup = "Totale Startup";
   var teamName = "Nome Team";
   var numberofVotes = "Votazioni ricevute";
+
+
   //pre-fill order for presentation in html
   var orderList = [teamName, numberofVotes];
-  for (var j = 0; j < votesColumn.length; j++) {
-    orderList.push(values[0][votesColumn[j]])
+  for (var j = 0; j < votesColumnStandard.length; j++) {
+    orderList.push(values[0][votesColumnStandard[j]])
   }
   orderList.push(titleTotalScore);
+
+  //pre-fill order for special rank
+  var orderListStartup = [teamName, numberofVotes];
+  for (var j = 0; j < votesColumnStartup.length; j++) {
+    orderListStartup.push(values[0][votesColumnStartup[j]])
+  }
+  orderListStartup.push(titleTotalScoreStartup);
+
 
   // Loop through the rows and count the votes
   for (var i = 1; i < values.length; i++) {
@@ -36,9 +51,11 @@ function countVotes() {
       else {
         counts[discriminatingValue][numberofVotes] += 1;
       }
-      for (var j = 0; j < votesColumn.length; j++) {
-        var vote = values[i][votesColumn[j]]; // Adjust for 0-based indexing
-        // If the total value is not in the counts object, initialize it
+
+      for (var j = 0; j < votesColumnStandard.length; j++) {
+        var vote = values[i][votesColumnStandard[j]]; // Adjust for 0-based indexing
+        // Set Total value based on the type of column
+
         if (!counts[discriminatingValue][titleTotalScore]) {
           counts[discriminatingValue][titleTotalScore] = vote;
         } else {
@@ -46,7 +63,29 @@ function countVotes() {
         }
 
         // Increment the count for the vote and discriminating value
-        var colName = values[0][votesColumn[j]]
+        var colName = values[0][votesColumnStandard[j]]
+        if (!counts[discriminatingValue][colName]) {
+          counts[discriminatingValue][colName] = vote;
+        }
+        else {
+          counts[discriminatingValue][colName] += vote;
+        }
+
+      }
+
+      // Second cols
+      for (var j = 0; j < votesColumnStartup.length; j++) {
+        var vote = values[i][votesColumnStartup[j]]; // Adjust for 0-based indexing
+        // Set Total value based on the type of column
+
+        if (!counts[discriminatingValue][titleTotalScoreStartup]) {
+          counts[discriminatingValue][titleTotalScoreStartup] = vote;
+        } else {
+          counts[discriminatingValue][titleTotalScoreStartup] += vote;
+        }
+
+        // Increment the count for the vote and discriminating value
+        var colName = values[0][votesColumnStartup[j]]
         if (!counts[discriminatingValue][colName]) {
           counts[discriminatingValue][colName] = vote;
         }
@@ -58,9 +97,12 @@ function countVotes() {
     }
 
   }
-  console.log([counts, orderList]);
-  return [counts, orderList];
+  console.log([counts, orderList, orderListStartup]);
+  return [counts, orderList, orderListStartup];
 }
+
+
+
 
 function onEditTrigger(e) {
   doGet();
