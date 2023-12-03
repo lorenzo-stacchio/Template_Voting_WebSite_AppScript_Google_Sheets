@@ -15,7 +15,10 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col">
-        <h1 class="mb-4">Hackathon current ranking</h1>
+        <h1 class="mb-4">University of Macerata - Hackathon current ranking</h1>
+      </div>
+      <div class="col">
+      <img src="https://media.salonedellostudente.it/app/uploads/2020/05/21095136/Logo_UNIMC_alta_pic-1.jpg" width="80%">
       </div>
     </div>
 
@@ -23,9 +26,18 @@
       <div class="col">
         <table class="table table-bordered table-striped">
           <thead class="thead-dark">
-          <tr>
-            <td class="td">Team Name </td>
-            <td class="td">Actual Score </td>
+          <tr id="thead_tr">
+            <!--<td class="td"> Team Name </td>
+            <td class="td" class="justified-text"> Originalità e innovatività del progetto </td>
+            <td class="td"> Utilizzo delle conoscenze e dei contenuti del corso di Informatica per la Comunicazione </td>
+            <td class="td"> Proprietà di linguaggio con particolare riferimento al linguaggio tecnico-informatico </td>
+            <td class="td"> Qualità della presentazione </td>
+            <td class="td"> Collaborazione e chiarezza dei contributi dei componenti del gruppo </td>
+            <td class="td"> Esposizione condivisa tra i membri del gruppo e rispetto del tempo a disposizione </td>
+            <td class="td"> Qualità e quantità dell'attività social su LinkedIn </td>
+            <td class="td"> L'idea più essere trasformata in una startup? </td>
+            <td class="td"> Totale </td>
+            -->
           </tr>
           </thead>
           <tbody id="valueList">
@@ -47,21 +59,35 @@
             console.log(values);
             listElement.innerHTML = ''; // Clear the list
 
-            var dictEl = Object.entries(values);
+            var [dictEl, listOrderNames] = values;
 
+            // CREATE TABLE THEAD
+            var thead_table = document.getElementById("thead_tr");
+            thead_table.innerHTML = '';
+
+            listOrderNames.forEach((key) => {
+              var td1 = document.createElement('td');
+              td1.innerText = key;
+              td1.classList.add('justified-text');
+              thead_table.appendChild(td1);
+            });
+
+            var dictEl = Object.entries(dictEl); // parse to dict
+            
             //sorted by vote
-            for (const [key, value] of dictEl.sort((a, b) => b[1] - a[1])) {
-              console.log(key, value);
-              var rowTable = document.createElement('tr');
-              var array1 = [key,value];
+            for (const [teamName, dictScores] of dictEl.sort((a, b) => b[1]["Totale"] - a[1]["Totale"])) {
+              console.log("Debug", teamName, dictScores);
 
-              array1.forEach((element) =>{
-                    console.log(element);
+              var rowTable = document.createElement('tr'); //add row to table
+              
+              // add team name
+              
+              listOrderNames.forEach((key) =>{
+                    console.log(key);
                     var td1 = document.createElement('td');
-                    td1.innerText = element;
+                    td1.innerText = dictScores[key];
                     rowTable.appendChild(td1)
               });
-              console.log(rowTable);
 
               rowTable.className = 'tr';
               listElement.appendChild(rowTable);  
