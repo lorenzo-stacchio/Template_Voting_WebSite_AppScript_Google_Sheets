@@ -24,7 +24,9 @@
 
     <div class="row">
       <div class="col">
-        <p class="mb-4"> <h4> Ordinary Ranking </h4> </p>
+        <p class="mb-4">
+        <h4> Ordinary Ranking </h4>
+        </p>
         <table class="table table-bordered table-striped">
           <thead class="thead-dark">
             <tr id="thead_tr">
@@ -50,16 +52,30 @@
 
     <div class="row">
       <div class="col">
-        <p class="mb-4"> <h4> Special Ranking </h4> </p>
+        <p class="mb-4">
+        <h4> Ranking Social </h4>
+        </p>
         <table class="table table-bordered table-striped">
           <thead class="thead-dark">
-            <tr id="thead_trSpecial">
+            <tr id="thead_trSocial">
             </tr>
           </thead>
-          <tbody id="valueListSpecial">
+          <tbody id="valueListSocial">
           </tbody>
         </table>
-
+      </div>
+      <div class="col">
+        <p class="mb-4">
+        <h4> Ranking Startup </h4>
+        </p>
+        <table class="table table-bordered table-striped">
+          <thead class="thead-dark">
+            <tr id="thead_trStartUp">
+            </tr>
+          </thead>
+          <tbody id="valueListStartUp">
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -74,7 +90,7 @@
     function updateList(values) {
             
 
-            var [dictEl, listOrderNames, listOrderNamesSpecial] = values;
+            var [dictEl, listOrderNames, listOrderNamesStartUp, listOrderNamesSocial] = values;
 
             // CREATE TABLE RANKING THEAD
             var listElement = document.getElementById('valueList');
@@ -91,15 +107,28 @@
 
 
             // CREATE TABLE SPECIAL RANKING THEAD
-            var listElementSpecial = document.getElementById('valueListSpecial');
-            listElementSpecial.innerHTML = ''; // Clear the list
-              var thead_table = document.getElementById("thead_trSpecial");
-                    thead_table.innerHTML = '';
-              listOrderNamesSpecial.forEach((key) => {
+            var listElementSocial = document.getElementById('valueListSocial');
+            listElementSocial.innerHTML = ''; // Clear the list
+              var thead_tableSocial = document.getElementById("thead_trSocial");
+              thead_tableSocial.innerHTML = '';
+              listOrderNamesSocial.forEach((key) => {
                 var td1 = document.createElement('td');
                 td1.innerText = key;
                 td1.classList.add('justified-text');
-                thead_table.appendChild(td1);
+                thead_tableSocial.appendChild(td1);
+              });
+
+
+            // CREATE TABLE SPECIAL RANKING THEAD
+            var listElementStartUp = document.getElementById('valueListStartUp');
+            listElementStartUp.innerHTML = ''; // Clear the list
+            var thead_tableStartUp = document.getElementById("thead_trStartUp");
+            thead_tableStartUp.innerHTML = '';
+              listOrderNamesStartUp.forEach((key) => {
+                var td1 = document.createElement('td');
+                td1.innerText = key;
+                td1.classList.add('justified-text');
+                thead_tableStartUp.appendChild(td1);
               });
 
 
@@ -110,7 +139,7 @@
 
 
             //sorted by vote
-            for (const [teamName, dictScores] of dictEl.sort((a, b) => b[1]["Totale"] - a[1]["Totale"])) {
+            for (const [teamName, dictScores] of dictEl.sort((a, b) => (b[1]["Totale"]/ b[1]["Votazioni ricevute"]) - (a[1]["Totale"]/ a[1]["Votazioni ricevute"]))) {
 
               // FILL CLASSICAL RANKING TABLE
               var rowTable = document.createElement('tr'); //add row to table
@@ -120,7 +149,7 @@
                     if (avoidMean.includes(key)){
                         td1.innerText = dictScores[key];
                     } else{
-                      td1.innerText = dictScores[key] / dictScores["Votazioni ricevute"];
+                      td1.innerText = (dictScores[key] / dictScores["Votazioni ricevute"]).toFixed(2);
                     }
                     rowTable.appendChild(td1)
               });
@@ -130,27 +159,46 @@
             }
 
 
-            
-
-            for (const [teamName, dictScores] of dictEl.sort((a, b) => b[1]["Totale Startup"] - a[1]["Totale Startup"])) {
+            for (const [teamName, dictScores] of dictEl.sort((a, b) => (b[1]["Totale Social"]/ b[1]["Votazioni ricevute"]) - (a[1]["Totale Social"]/ a[1]["Votazioni ricevute"]))) {
 
               // FILL SPECIAL RANKING TABLE
               var rowTableSpecial = document.createElement('tr'); //add row to table
-              listOrderNamesSpecial.forEach((key) =>{
+              listOrderNamesSocial.forEach((key) =>{
                     console.log(key);
                     var td1 = document.createElement('td');
-
                     if (avoidMean.includes(key)){
                         td1.innerText = dictScores[key];
                     } else{
-                      td1.innerText = dictScores[key] / dictScores["Votazioni ricevute"];
+                      td1.innerText = (dictScores[key] / dictScores["Votazioni ricevute"]).toFixed(2);
                     }
                     
                     rowTableSpecial.appendChild(td1)
               });
 
               rowTableSpecial.className = 'tr';
-              listElementSpecial.appendChild(rowTableSpecial);  
+              listElementSocial.appendChild(rowTableSpecial);  
+             }
+
+
+            for (const [teamName, dictScores] of dictEl.sort((a, b) => (b[1]["Totale Startup"]/ b[1]["Votazioni ricevute"]) - (a[1]["Totale Startup"]/ a[1]["Votazioni ricevute"]))) {
+
+              // FILL SPECIAL RANKING TABLE STARTUP
+              var rowTableSpecial = document.createElement('tr'); //add row to table
+              listOrderNamesStartUp.forEach((key) =>{
+                    console.log(key);
+                    var td1 = document.createElement('td');
+
+                    if (avoidMean.includes(key)){
+                        td1.innerText = dictScores[key];
+                    } else{
+                      td1.innerText = (dictScores[key] / dictScores["Votazioni ricevute"]).toFixed(2);
+                    }
+                    
+                    rowTableSpecial.appendChild(td1)
+              });
+
+              rowTableSpecial.className = 'tr';
+              listElementStartUp.appendChild(rowTableSpecial);  
              }
 
             var date = new Date().toLocaleString();
