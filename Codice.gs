@@ -4,9 +4,10 @@ function countVotes() {
 
   // Define the column containing the votes and the discriminating column
   var votesColumnStandard = [2, 3, 5, 6, 7, 8]; // Assuming "Votes" is in the first column (A)
-  var votesColumnStartup = [9, 10]; // Assuming "Votes" is in the first column (A)
+  var votesColumnSocial = [9];
+  var votesColumnStartup = [10]; // Assuming "Votes" is in the first column (A)
 
-  var allCriteria = votesColumnStandard.concat(votesColumnStartup);
+  var allCriteria = votesColumnStandard.concat(votesColumnStartup).concat(votesColumnSocial);
 
   var discriminatingColumn = 4; // Assuming "Candidate" is in the second column (B)
 
@@ -18,6 +19,7 @@ function countVotes() {
   var counts = {};
   var titleTotalScore = "Totale";
   var titleTotalScoreStartup = "Totale Startup";
+  var titleTotalScoreSocial = "Totale Social";
   var teamName = "Nome Team";
   var numberofVotes = "Votazioni ricevute";
 
@@ -30,11 +32,21 @@ function countVotes() {
   orderList.push(titleTotalScore);
 
   //pre-fill order for special rank
+
   var orderListStartup = [teamName, numberofVotes];
   for (var j = 0; j < votesColumnStartup.length; j++) {
     orderListStartup.push(values[0][votesColumnStartup[j]])
   }
   orderListStartup.push(titleTotalScoreStartup);
+
+
+  //pre-fill order for special rank 2
+
+  var orderListSocial = [teamName, numberofVotes];
+    for (var j = 0; j < votesColumnSocial.length; j++) {
+      orderListSocial.push(values[0][votesColumnSocial[j]])
+    }
+    orderListSocial.push(titleTotalScoreSocial);
 
 
   // Loop through the rows and count the votes
@@ -94,11 +106,34 @@ function countVotes() {
         }
 
       }
+
+
+      for (var j = 0; j < votesColumnSocial.length; j++) {
+        var vote = values[i][votesColumnSocial[j]]; // Adjust for 0-based indexing
+        // Set Total value based on the type of column
+
+       if (!counts[discriminatingValue][titleTotalScoreSocial]) {
+          counts[discriminatingValue][titleTotalScoreSocial] = vote;
+        } else {
+          counts[discriminatingValue][titleTotalScoreSocial] += vote;
+        }
+
+        // Increment the count for the vote and discriminating value
+        var colName = values[0][votesColumnSocial[j]]
+        if (!counts[discriminatingValue][colName]) {
+          counts[discriminatingValue][colName] = vote;
+        }
+        else {
+          counts[discriminatingValue][colName] += vote;
+        }
+
+      }
+         
     }
 
   }
-  console.log([counts, orderList, orderListStartup]);
-  return [counts, orderList, orderListStartup];
+  console.log([counts, orderList, orderListStartup, orderListSocial]);
+  return [counts, orderList, orderListStartup, orderListSocial];
 }
 
 
