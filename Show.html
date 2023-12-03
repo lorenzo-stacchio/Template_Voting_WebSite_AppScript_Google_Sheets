@@ -18,16 +18,17 @@
         <h1 class="mb-4">University of Macerata - Hackathon current ranking</h1>
       </div>
       <div class="col">
-      <img src="https://media.salonedellostudente.it/app/uploads/2020/05/21095136/Logo_UNIMC_alta_pic-1.jpg" width="80%">
+        <img src="https://media.salonedellostudente.it/app/uploads/2020/05/21095136/Logo_UNIMC_alta_pic-1.jpg" width="80%">
       </div>
     </div>
 
     <div class="row">
       <div class="col">
+        <p class="mb-4"> <h4> Ordinary Ranking </h4> </p>
         <table class="table table-bordered table-striped">
           <thead class="thead-dark">
-          <tr id="thead_tr">
-            <!--<td class="td"> Team Name </td>
+            <tr id="thead_tr">
+              <!--<td class="td"> Team Name </td>
             <td class="td" class="justified-text"> Originalità e innovatività del progetto </td>
             <td class="td"> Utilizzo delle conoscenze e dei contenuti del corso di Informatica per la Comunicazione </td>
             <td class="td"> Proprietà di linguaggio con particolare riferimento al linguaggio tecnico-informatico </td>
@@ -38,33 +39,49 @@
             <td class="td"> L'idea più essere trasformata in una startup? </td>
             <td class="td"> Totale </td>
             -->
-          </tr>
+            </tr>
           </thead>
           <tbody id="valueList">
           </tbody>
         </table>
-      
+
       </div>
-    </div>
-    <div class="row">
-      <div class="col text-right">
-      <h5 class="mb-5" id="updated">Update at </h5>
-      </div>
-    </div>
     </div>
 
-    <script>
-      function updateList(values) {
+    <div class="row">
+      <div class="col">
+        <p class="mb-4"> <h4> Special Ranking </h4> </p>
+        <table class="table table-bordered table-striped">
+          <thead class="thead-dark">
+            <tr id="thead_trSpecial">
+            </tr>
+          </thead>
+          <tbody id="valueListSpecial">
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col text-right">
+        <h5 class="mb-5" id="updated">Update at </h5>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function updateList(values) {
+            
+
+            var [dictEl, listOrderNames, listOrderNamesSpecial] = values;
+
+            // CREATE TABLE RANKING THEAD
             var listElement = document.getElementById('valueList');
             console.log(values);
             listElement.innerHTML = ''; // Clear the list
-
-            var [dictEl, listOrderNames] = values;
-
-            // CREATE TABLE THEAD
             var thead_table = document.getElementById("thead_tr");
             thead_table.innerHTML = '';
-
             listOrderNames.forEach((key) => {
               var td1 = document.createElement('td');
               td1.innerText = key;
@@ -72,26 +89,69 @@
               thead_table.appendChild(td1);
             });
 
+
+            // CREATE TABLE SPECIAL RANKING THEAD
+            var listElementSpecial = document.getElementById('valueListSpecial');
+            listElementSpecial.innerHTML = ''; // Clear the list
+              var thead_table = document.getElementById("thead_trSpecial");
+                    thead_table.innerHTML = '';
+              listOrderNamesSpecial.forEach((key) => {
+                var td1 = document.createElement('td');
+                td1.innerText = key;
+                td1.classList.add('justified-text');
+                thead_table.appendChild(td1);
+              });
+
+
             var dictEl = Object.entries(dictEl); // parse to dict
             
+            //set avoid mean columns 
+            var avoidMean = ["Nome Team", "Votazioni ricevute"];
+
+
             //sorted by vote
             for (const [teamName, dictScores] of dictEl.sort((a, b) => b[1]["Totale"] - a[1]["Totale"])) {
-              console.log("Debug", teamName, dictScores);
 
+              // FILL CLASSICAL RANKING TABLE
               var rowTable = document.createElement('tr'); //add row to table
-              
-              // add team name
-              
               listOrderNames.forEach((key) =>{
                     console.log(key);
                     var td1 = document.createElement('td');
-                    td1.innerText = dictScores[key];
+                    if (avoidMean.includes(key)){
+                        td1.innerText = dictScores[key];
+                    } else{
+                      td1.innerText = dictScores[key] / dictScores["Votazioni ricevute"];
+                    }
                     rowTable.appendChild(td1)
               });
 
               rowTable.className = 'tr';
               listElement.appendChild(rowTable);  
             }
+
+
+            
+
+            for (const [teamName, dictScores] of dictEl.sort((a, b) => b[1]["Totale Startup"] - a[1]["Totale Startup"])) {
+
+              // FILL SPECIAL RANKING TABLE
+              var rowTableSpecial = document.createElement('tr'); //add row to table
+              listOrderNamesSpecial.forEach((key) =>{
+                    console.log(key);
+                    var td1 = document.createElement('td');
+
+                    if (avoidMean.includes(key)){
+                        td1.innerText = dictScores[key];
+                    } else{
+                      td1.innerText = dictScores[key] / dictScores["Votazioni ricevute"];
+                    }
+                    
+                    rowTableSpecial.appendChild(td1)
+              });
+
+              rowTableSpecial.className = 'tr';
+              listElementSpecial.appendChild(rowTableSpecial);  
+             }
 
             var date = new Date().toLocaleString();
             document.getElementById('updated').textContent = `Update at ${date}`;
@@ -104,7 +164,7 @@
     
     update();
     setInterval(update, 5000);
-    </script>
+  </script>
 </body>
 
 </html>
